@@ -56,18 +56,22 @@ class ShakeDetectorView extends Ui.View {
     // SCREEN_SHAPE_SEMI_OCTAGON only appeared with Instinct, so on an older
     // device the constant itself is missing and reading it would throw. Any
     // device that does not know the constant cannot be Instinct-shaped anyway.
+    var shape = System.getDeviceSettings().screenShape;
     var isInstinctShape = false;
     if (System has :SCREEN_SHAPE_SEMI_OCTAGON) {
-      isInstinctShape =
-        System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_SEMI_OCTAGON;
+      isInstinctShape = shape == System.SCREEN_SHAPE_SEMI_OCTAGON;
     }
-    mScreenLayout = new ShakeDetectorLayout(dc, isInstinctShape);
+    // SCREEN_SHAPE_ROUND has been in the API since 1.0, so unlike the
+    // semi-octagon above it needs no `has` guard.
+    var isRound = shape == System.SCREEN_SHAPE_ROUND;
+    mScreenLayout = new ShakeDetectorLayout(dc, isInstinctShape, isRound);
     writeLog(
       "ShakeDetectorView.onLayout()",
-      Lang.format("$1$x$2$, instinct=$3$", [
+      Lang.format("$1$x$2$, instinct=$3$, round=$4$", [
         dc.getWidth(),
         dc.getHeight(),
         isInstinctShape,
+        isRound,
       ])
     );
   }

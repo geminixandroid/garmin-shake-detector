@@ -1,5 +1,6 @@
 using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Gfx;
+using Toybox.Math;
 import Toybox.Lang;
 
 // Which alert channels are currently armed, shown as a row of pictograms so the
@@ -17,14 +18,19 @@ enum {
 // order - clock, battery, chart, status, indicator row - and the only thing that
 // varies is a handful of fractions.
 //
-// Instinct-shaped watches (semi-octagon) have a small round sub-window in the top
-// right corner, so there the battery goes inside it, the clock shifts left to
-// clear it, and the chart starts lower down where the full width is free again.
-// That is the entire difference.
+// The header stacks down the centre line - battery on top, clock underneath,
+// both centred. Centre is the widest part of any screen at a given height, so
+// that one rule covers round, rectangular and everything between without
+// per-shape fractions.
+//
+// Instinct-shaped watches (semi-octagon) are the single exception: a small round
+// sub-window in the top right corner is part of the case, so there the battery
+// goes inside it, the clock shifts left to clear it, both on one line, and the
+// chart starts lower down where the full width is free again.
 //
 // Positions are fractions of the real screen size, never fixed pixels, and every
 // font is measured rather than assumed - the same code has to land on a 215x180
-// ForeRunner and a 176x176 Instinct.
+// ForeRunner, a 176x176 Instinct and a 454x454 Venu.
 //
 // Drawing is restricted to primitives that have been in the API since the 1.x
 // days - lines, rectangles, circles. In particular *not* Dc.drawArc: the manifest
@@ -36,25 +42,23 @@ class ShakeDetectorLayout {
   const REFERENCE_HEIGHT = 240.0;
 
   // Shared by every shape.
-  const CLOCK_Y_FRACTION = 0.06;
   const STATUS_Y_FRACTION = 0.70;
   const INDICATOR_Y_FRACTION = 0.86;
   const GRAPH_MARGIN_FRACTION = 0.04;
   const GRAPH_STATUS_GAP = 4;
+  const HEADER_TOP_FRACTION = 0.06;
+  const HEADER_GAP_FRACTION = 0.02;
 
-  // Per-shape: clock centre x, battery x/y, chart top, and how much width the
-  // clock has to fit into.
+  // Instinct only - the corner sub-window forces the battery off to the right
+  // and the clock off to the left of it, on one line.
   const INSTINCT_CLOCK_X_FRACTION = 0.32;
+  const INSTINCT_CLOCK_Y_FRACTION = 0.06;
   const INSTINCT_BATTERY_X_FRACTION = 0.824;
   const INSTINCT_BATTERY_Y_FRACTION = 0.10;
   const INSTINCT_GRAPH_TOP_FRACTION = 0.44;
   const INSTINCT_CLOCK_MAX_WIDTH_FRACTION = 0.59;
 
-  const DEFAULT_CLOCK_X_FRACTION = 0.36;
-  const DEFAULT_BATTERY_X_FRACTION = 0.80;
-  const DEFAULT_BATTERY_Y_FRACTION = 0.09;
   const DEFAULT_GRAPH_TOP_FRACTION = 0.36;
-  const DEFAULT_CLOCK_MAX_WIDTH_FRACTION = 0.70;
 
   var halfWidth as Number;
   var iconSize as Number;
@@ -75,7 +79,7 @@ class ShakeDetectorLayout {
 
   //! Takes the Dc so it can measure fonts itself - which strings have to fit
   //! where is a layout question, not the view's business.
-  function initialize(dc as Gfx.Dc, isInstinctShape as Boolean) {
+  function initialize(dc as Gfx.Dc, isInstinctShape as Boolean, isRound as Boolean) {
     var width = dc.getWidth();
     var height = dc.getHeight();
     halfWidth = width / 2;
@@ -84,26 +88,18 @@ class ShakeDetectorLayout {
       iconSize = 9;
     }
 
-    var clockXFraction = DEFAULT_CLOCK_X_FRACTION;
-    var batteryXFraction = DEFAULT_BATTERY_X_FRACTION;
-    var batteryYFraction = DEFAULT_BATTERY_Y_FRACTION;
-    var graphTopFraction = DEFAULT_GRAPH_TOP_FRACTION;
-    var clockMaxWidthFraction = DEFAULT_CLOCK_MAX_WIDTH_FRACTION;
-    if (isInstinctShape) {
-      clockXFraction = INSTINCT_CLOCK_X_FRACTION;
-      batteryXFraction = INSTINCT_BATTERY_X_FRACTION;
-      batteryYFraction = INSTINCT_BATTERY_Y_FRACTION;
-      graphTopFraction = INSTINCT_GRAPH_TOP_FRACTION;
-      clockMaxWidthFraction = INSTINCT_CLOCK_MAX_WIDTH_FRACTION;
-    }
-
-    xClock = (width * clockXFraction).toNumber();
-    yClock = (height * CLOCK_Y_FRACTION).toNumber();
-    xBattery = (width * batteryXFraction).toNumber();
-    yBattery = (height * batteryYFraction).toNumber();
     yStatusLine = (height * STATUS_Y_FRACTION).toNumber();
     yIndicatorLine = (height * INDICATOR_Y_FRACTION).toNumber();
 
+    var gap = (width * HEADER_GAP_FRACTION).toNumber();
+    if (gap < 2) {
+      gap = 2;
+    }
+
+    var graphTopFraction = DEFAULT_GRAPH_TOP_FRACTION;
+    if (isInstinctShape) {
+      graphTopFraction = INSTINCT_GRAPH_TOP_FRACTION;
+    }
     graphX = (width * GRAPH_MARGIN_FRACTION).toNumber();
     graphWidth = width - 2 * graphX;
     graphY = (height * graphTopFraction).toNumber();
@@ -112,10 +108,55 @@ class ShakeDetectorLayout {
       graphHeight = 0;
     }
 
+    var clockMaxWidth;
+    var clockMaxHeight;
+    if (isInstinctShape) {
+      // Unchanged. The sub-window in the top right corner is a fixed feature of
+      // the case, so the header here is a two-column line tuned to clear it and
+      // there is no room to centre anything.
+      xClock = (width * INSTINCT_CLOCK_X_FRACTION).toNumber();
+      yClock = (height * INSTINCT_CLOCK_Y_FRACTION).toNumber();
+      xBattery = (width * INSTINCT_BATTERY_X_FRACTION).toNumber();
+      yBattery = (height * INSTINCT_BATTERY_Y_FRACTION).toNumber();
+      clockMaxWidth = (width * INSTINCT_CLOCK_MAX_WIDTH_FRACTION).toNumber();
+      clockMaxHeight = height; // as before: width is the only real constraint
+    } else {
+      // Every other shape stacks the header down the centre line - battery on
+      // top, clock underneath, both centred. The centre line is the widest part
+      // of any screen at a given height, so this needs no per-shape fractions at
+      // all, and on a round watch nothing can wander into a corner that has no
+      // glass in it.
+      xBattery = halfWidth;
+      yBattery = (height * HEADER_TOP_FRACTION).toNumber();
+      // "100%" rather than the live reading, so the clock underneath does not
+      // shift by a pixel when the battery ticks over from 9% to 10%.
+      var batteryHeight = dc.getTextDimensions("100%", Gfx.FONT_XTINY)[1];
+
+      xClock = halfWidth;
+      yClock = yBattery + batteryHeight + gap;
+      clockMaxWidth = width - 2 * gap;
+      if (isRound) {
+        // A circle only widens on the way down, so the chord at the top of the
+        // clock is the tightest line the string will occupy.
+        clockMaxWidth = 2 * halfChordAt(yClock, width / 2) - 2 * gap;
+      }
+      // The clock is the one element that can grow into the chart, so it is
+      // capped vertically too - the font ladder is steep enough that a screen
+      // this tall would otherwise pick a face that overlaps.
+      clockMaxHeight = graphY - yClock - gap;
+    }
+    if (clockMaxWidth < 0) {
+      clockMaxWidth = 0;
+    }
+    if (clockMaxHeight < 0) {
+      clockMaxHeight = 0;
+    }
+
     fontClock = pickFont(
       dc,
       "23:59",
-      (width * clockMaxWidthFraction).toNumber(),
+      clockMaxWidth,
+      clockMaxHeight,
       // FONT_NUMBER_* rather than the FONT_SYSTEM_NUMBER_* aliases: the plain
       // names have existed since the 1.x API, and this app declares
       // minSdkVersion 2.4.0.
@@ -131,19 +172,35 @@ class ShakeDetectorLayout {
       dc,
       Ui.loadResource(Rez.Strings.Status_silent).toString(),
       width,
+      height, // unconstrained, as before
       [Gfx.FONT_LARGE, Gfx.FONT_MEDIUM, Gfx.FONT_SMALL, Gfx.FONT_TINY]
     );
   }
 
-  //! First font in `ladder` (largest first) whose `sample` fits `maxWidth`.
+  //! Half the width of a circle of `radius` at `y` pixels down from its top -
+  //! i.e. how far either side of centre there is still glass to draw on.
+  function halfChordAt(y as Number, radius as Number) as Number {
+    var dy = radius - y;
+    var inner = radius * radius - dy * dy;
+    if (inner <= 0) {
+      return 0;
+    }
+    return Math.sqrt(inner).toNumber();
+  }
+
+  //! First font in `ladder` (largest first) that renders `sample` inside
+  //! `maxWidth` x `maxHeight`. Pass the screen dimension to leave an axis
+  //! unconstrained.
   function pickFont(
     dc as Gfx.Dc,
     sample as String,
     maxWidth as Number,
+    maxHeight as Number,
     ladder as Array<Gfx.FontDefinition>
   ) as Gfx.FontDefinition {
     for (var i = 0; i < ladder.size(); i += 1) {
-      if (dc.getTextDimensions(sample, ladder[i])[0] <= maxWidth) {
+      var dims = dc.getTextDimensions(sample, ladder[i]);
+      if (dims[0] <= maxWidth && dims[1] <= maxHeight) {
         return ladder[i];
       }
     }
