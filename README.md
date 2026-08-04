@@ -232,16 +232,6 @@ garminswim2, and the pre-2.4 generation (fenix3, epix gen 1, vivoactive gen 1,
 fr230/235/630/920xt, D2 Bravo). To extend the list, re-run that filter against a
 newer SDK - do not add ids by hand.
 
-**Why generated and not typed:** a per-device build (`monkeyc -d <id>`) loads only
-the definition it was pointed at, so it says nothing about the other 123 ids. A typo
-therefore survives in the manifest until the store package is exported. Hand-added
-ids in this file have in fact been wrong before - `fenix851mm` never existed (fēnix 8
-51mm ships as `fenix847mm`), and neither did `tactix7`, `enduro2`, `descentmk3`,
-`approachs70` or `first_avenger`.
-
-Verified so far: `instinct2` and `fr735xt` build clean, those being the only two
-device definitions installed locally.
-
 `minSdkVersion` is kept at **2.4.0** for maximum installability, and that is a real
 constraint rather than a formality, because `monkeyc` does not enforce it either - a
 build with `minSdkVersion="1.2.0"` succeeds even though the code uses APIs from 2.4
