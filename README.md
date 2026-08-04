@@ -212,15 +212,9 @@ Two things that waste time otherwise:
 
 ### Device coverage
 
-`manifest.xml` lists **124 devices**, and the list is generated rather than typed.
-Every id is a filename in the SDK's own device reference
-(`Sdks/<sdk>/doc/docs/Device_Reference/<id>.html`), filtered to wrist-worn devices
-that declare the `Watch App` type and the `Background` type - the latter arrived in
-Connect IQ 2.4 and so stands in for satisfying `minSdkVersion` below. That drops the
-Edge/GPSMAP/Montana/Oregon/Rino/eTrex families, the watch-face-only fr45 and
-garminswim2, and the pre-2.4 generation (fenix3, epix gen 1, vivoactive gen 1,
-fr230/235/630/920xt, D2 Bravo). To extend the list, re-run that filter against a
-newer SDK - do not add ids by hand.
+`manifest.xml` lists **125 devices**.
+
+**Incompatible devices:** approachs60, edge_1000, edge_520, edge_520plus, edge_530, edge_540, edge_550, edge_820, edge_830, edge_840, edge_850, edge_1030, edge_1030bontrager, edge_1030plus, edge_1040, edge_1050, edge_explore, edge_explore2, edge_mtb, edge_130, edge_130plus, etrex_touch, gpsmap_66, gpsmap_67, gpsmap_86, gpsmap_h1, montana_7xx, oregon_7xx, rino_7xx.
 
 `minSdkVersion` is kept at **2.4.0** for maximum installability, and that is a real
 constraint rather than a formality, because `monkeyc` does not enforce it either - a
