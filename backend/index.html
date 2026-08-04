@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ShakeDetector</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#f44336">
+<!-- No manifest link here on purpose. A manifest sets start_url, so linking it from the
+     landing page would make "Add to Home Screen" create an icon that opens *this* page -
+     the one without a Subscribe button. The manifest belongs on /setup only. -->
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+    line-height: 1.55;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+  .sub { opacity: .7; margin: 0 0 1.5rem; }
+  .warn {
+    border-left: 4px solid #d9534f;
+    background: rgba(217, 83, 79, .1);
+    padding: .75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 1.75rem;
+  }
+  h2 { font-size: 1.1rem; margin: 1.75rem 0 .5rem; }
+  h3 { font-size: 1rem; margin: 0 0 .4rem; }
+  .ios {
+    border-left: 4px solid #0a84ff;
+    background: rgba(10, 132, 255, .1);
+    padding: .85rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0 0;
+  }
+  .ios p { margin: .5rem 0; }
+  .ios ol { margin: .5rem 0; }
+  ol { padding-left: 1.3rem; }
+  li { margin-bottom: .6rem; }
+  code {
+    background: rgba(127, 127, 127, .18);
+    padding: .1rem .35rem;
+    border-radius: 4px;
+    font-size: .9em;
+    word-break: break-all;
+  }
+  footer { margin-top: 2.5rem; font-size: .85rem; opacity: .65; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+
+<h1>🚨 ShakeDetector</h1>
+<p class="sub">A Garmin watch watches for sudden rhythmic shaking of the wrist and tells your phone.</p>
+
+<div class="warn">
+  <strong>This is a personal, experimental project, not a medical device.</strong>
+  The algorithm has not been clinically validated. Do not rely on it to detect a seizure,
+  and do not treat it as a substitute for medical supervision.
+</div>
+
+<h2>How it works</h2>
+<p>
+  The watch reads its accelerometer 25 times a second and counts how often the movement
+  crosses an amplitude threshold. When enough crossings pile up inside a five-second
+  window, it treats that as shaking: it vibrates, beeps and lights the screen, and posts a
+  short signal to this server. The server then pushes a notification to every browser
+  subscribed to that watch.
+</p>
+<p>
+  Detection happens entirely on the watch, so it keeps working with the phone off, out of
+  range or out of signal — the phone is only a louder speaker. To keep notifications
+  useful rather than noisy, the watch tells the server at most once a minute even while it
+  keeps buzzing on your wrist every few seconds.
+</p>
+
+<h2>Connecting a watch</h2>
+<ol>
+  <li>On the watch: <strong>Menu → Setup link</strong>. A six-character code appears.</li>
+  <li>On your phone, open <code>this-site/s/CODE</code> to reach the setup page.</li>
+  <li>Press <strong>Subscribe to notifications</strong> and allow them in the browser.</li>
+</ol>
+<p>That is it. From then on the watch sends an alert whenever it triggers.</p>
+
+<div class="ios">
+  <h3>On iPhone and iPad — add to the Home Screen first</h3>
+  <p>
+    Apple does not allow notifications for sites opened in a Safari tab, so at step 2 the
+    page will ask you to install it as an app:
+  </p>
+  <ol>
+    <li>In Safari, press <strong>Share</strong> (the square with an arrow).</li>
+    <li>Choose <strong>Add to Home Screen</strong> and confirm.</li>
+    <li>Close Safari and open <strong>ShakeDetector from the Home Screen</strong>.</li>
+    <li>The Subscribe button now works — allow notifications.</li>
+  </ol>
+  <p>
+    Requires iOS 16.4 or newer. Always open it from the Home Screen icon afterwards: in a
+    Safari tab, subscribing is unavailable again.
+  </p>
+</div>
+
+<h2>Checking that it works</h2>
+<p>
+  On the watch: <strong>Menu → Test</strong> fires a real alarm and reports whether the
+  signal reached the server. The watch vibrates and a notification arrives on the phone.
+</p>
+
+<h2>Worth knowing</h2>
+<ol>
+  <li>
+    The notification is an ordinary browser one: <strong>your phone's silent mode will
+    mute it</strong>, and it cannot repeat until acknowledged.
+  </li>
+  <li>
+    The watch works on its own. If the phone is unreachable, the vibration and tone on
+    your wrist still happen.
+  </li>
+  <li>
+    The subscription lives in the browser. A different browser, or cleared site data,
+    means subscribing again.
+  </li>
+  <li>
+    <strong>You can subscribe several devices</strong> — the alert goes to all of them.
+    Open the same link on another phone and press Subscribe. Turning notifications off on
+    one device leaves the others alone.
+  </li>
+</ol>
+
+<h2>Source</h2>
+<p>
+  Everything is open source — the Connect IQ watch app and this server live in one
+  repository:
+</p>
+<p>
+  <a href="https://github.com/geminixandroid/garmin-shake-detector">github.com/geminixandroid/garmin-shake-detector</a>
+</p>
+<p>Licensed under GPL-3.0-or-later.</p>
+<p>
+  If you need something clinically founded rather than a personal experiment, look at
+  <a href="https://github.com/OpenSeizureDetector/Garmin_sd">OpenSeizureDetector</a>: a
+  separate project that streams the watch's accelerometer to a phone and analyses it there
+  with a proper frequency-domain algorithm.
+</p>
+<p>
+  Bug reports and pull requests are welcome. If you run your own instance, the watch app's
+  server address is a build-time constant in <code>ShakeDetectorPhone.mc</code>.
+</p>
+
+<footer>
+  Service status: <a href="/api/health">/api/health</a> · GPL-3.0-or-later
+</footer>
+
+</body>
+</html>

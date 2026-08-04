@@ -1,0 +1,14 @@
+node_modules
+.htaccess
+
+# Secrets - the VAPID private key lives in both of these. Committing them means
+# rotating the keypair, which invalidates every existing push subscription.
+.env
+.vapidkey
+
+# Local database: contains push subscriptions and per-device secrets.
+*.db
+*.db-journal
+
+# Log files
+npm-debug.log*

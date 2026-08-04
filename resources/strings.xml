@@ -1,0 +1,46 @@
+<resources>
+  <string id="AppName">ShakeDetector</string>
+  <string id="VersionId">V0.1.0</string>
+
+  <!-- Status line. Only one of these is shown at a time - see
+       ShakeDetectorView.statusString(). -->
+  <string id="Status_ok">OK</string>
+  <string id="Status_alarm">ALARM</string>
+  <string id="Status_mute">MUTE</string>
+  <string id="Status_mute_alarm">MUTE!</string>
+  <string id="Status_silent">SILENT</string>
+
+  <string id="Settings_title">Settings</string>
+  <!-- Only used by the legacy (pre-API 3.0) menu, which has no toggle widget and
+       has to spell the state out in the item label. -->
+  <string id="Label_on">ON</string>
+  <string id="Label_off">OFF</string>
+  <string id="Vibration_title">Vibration</string>
+  <string id="Vibration_desc">Vibrate on alarm</string>
+  <string id="Sound_title">Sound</string>
+  <string id="Sound_desc">Beep on alarm</string>
+  <string id="Light_title">Light</string>
+  <string id="Light_desc">Backlight on alarm</string>
+  <string id="Phone_title">Phone alert</string>
+  <string id="Phone_desc">Notify phone on alarm</string>
+
+  <string id="Test_title">Test</string>
+  <string id="Test_desc">Fire the alarm now</string>
+  <string id="Test_local_fired">Watch alerted</string>
+  <string id="Test_muted">Muted - suppressed</string>
+  <string id="Test_phone_off">Phone: off</string>
+  <string id="Test_phone_sending">Phone: sending...</string>
+  <string id="Test_phone_sent">Phone: sent</string>
+  <string id="Test_phone_failed">Phone: failed</string>
+
+  <string id="Link_title">Setup link</string>
+  <string id="Link_desc">Get a code to open on your phone</string>
+  <string id="Link_waiting">Requesting...</string>
+  <string id="Link_failed">No connection</string>
+  <!-- Connect IQ refuses a non-https URL outright (SECURE_CONNECTION_REQUIRED),
+       which no retry will fix - so it gets its own message. -->
+  <string id="Link_needs_https">Needs https URL</string>
+  <string id="Link_no_phone">No phone</string>
+
+  <string id="Exit_app_confirmation">Exit ShakeDetector?</string>
+</resources>

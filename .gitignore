@@ -1,0 +1,8 @@
+bin/
+build/
+*.prg
+*.prg.debug.xml
+*.iq
+*.der
+*.pem
+sys.nfm

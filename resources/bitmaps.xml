@@ -1,0 +1,14 @@
+<resources>
+    <!-- Fallback launcher icon for every device without its own
+         resources-<device> override. 70x70 is the largest size any Connect IQ
+         device asks for, so this only ever gets scaled *down*, which looks far
+         better than scaling up. Dark glyph on white so it stays visible on the
+         light app lists most colour watches use.
+
+         A device whose required size differs still logs a rescale warning when
+         you build for it. That is accepted rather than fixed: silencing it needs a
+         resources-<device>/ directory with an exactly-sized icon per device, which
+         is not worth it across a manifest this wide. There are no such overrides
+         at the moment. -->
+    <bitmap id="LauncherIcon" filename="images/icon_70x70.png" />
+</resources>

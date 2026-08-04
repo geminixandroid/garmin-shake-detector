@@ -1,0 +1,9 @@
+project.manifest = manifest.xml
+project.typecheck = 2
+
+# Nothing else belongs here: a resources-<device> directory is picked up
+# automatically by that naming convention, and its resources override the ones in
+# resources/ for that device. That is how the per-device launcher icons work -
+# each device asks for its own icon size, and a single source image would be
+# rescaled for everyone else. Devices without their own directory fall back to
+# resources/bitmaps.xml.

@@ -1,0 +1,30 @@
+{
+  "name": "shake-detector-notifier",
+  "version": "1.0.3",
+  "main": "server.js",
+  "author": {
+    "name": "Alexander Goldobin"
+  },
+  "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=14"
+  },
+  "//": "Two versions are pinned EXACTLY, not with ^ or ~, and both pins are load-bearing. sqlite3 5.0.2 is the newest release whose prebuilt binary the host's ancient libstdc++ can load - 5.1.x needs CXXABI_1.3.8 (GCC 4.9) and 6.x needs GLIBC_2.38. web-push 3.6.2 is the last release before 3.6.3 raised the requirement to node >= 16. A caret on either resolves straight back to the broken version. The other two are capped for the same Node 14 reason: express-rate-limit 7+ and dotenv 17 both declare node >= 16.",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^6.11.2",
+    "sqlite3": "5.0.2",
+    "web-push": "3.6.2"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
