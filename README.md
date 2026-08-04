@@ -1,8 +1,6 @@
 # ShakeDetector
 
-A Garmin Connect IQ watch app that reads the accelerometer and detects sustained,
-rhythmic, high-amplitude shaking of the wrist, alerting with vibration, a tone and
-the backlight.
+A Garmin Connect IQ watch app that detects sustained, high-amplitude wrist shaking using the accelerometer. Alerts with vibration, sound, and backlight, with optional phone push notifications. Runs entirely on the watch. Not a medical device.
 
 **Detection runs entirely on the watch** - no phone, no network, nothing to pair.
 A phone can optionally be notified as well, purely as a louder speaker; if it is
