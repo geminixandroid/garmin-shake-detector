@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
-    <iq:application entry="ShakeDetectorApp" id="f27568218be443e3926f58536d89029f" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="2.4.0" name="@Strings.AppName" type="watch-app">
+    <iq:application entry="ShakeDetectorApp" id="3aafe24a-77ed-4285-9708-b395e7f5cab8" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="2.4.0" name="@Strings.AppName" type="watch-app">
         <iq:permissions>
             <iq:uses-permission id="Communications"/>
             <iq:uses-permission id="Sensor"/>
