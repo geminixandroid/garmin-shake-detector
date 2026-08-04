@@ -5,4 +5,5 @@ build/
 *.iq
 *.der
 *.pem
+developer_key
 sys.nfm
