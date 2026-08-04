@@ -26,15 +26,7 @@ server in [backend/](backend/).
 
 One layout for every device - no app name anywhere, five things in the same order:
 
-```
-  14:32         87%  <- clock, and battery to its right
- - - - - - - - - -   <- dashed line: the alarm threshold (8)
- ▁▁▂▅█▆▂▁▁           <- window total, one bar per second, newest on the right
-     OK              <- status: OK / ALARM / MUTE / MUTE! / SILENT
-                        (shows the app version for the first 5 s after launch)
-  ((|)) ((o  ☼       <- indicator row: which alert channels are armed
-                        (struck-through speaker = nothing can alert)
-```
+<img width="640" src="https://github.com/user-attachments/assets/28bd4bd8-ee52-4d4d-baee-a36d17606177" />
 
 Instinct-shaped watches (semi-octagon display) have a small round sub-window in the
 top right corner, so there the battery goes inside it, the clock shifts left to
