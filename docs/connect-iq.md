@@ -1,6 +1,9 @@
 # Building, device coverage and Connect IQ traps
 
-Needs Connect IQ SDK 6.4.2+ (developed against 9.2.0) and a developer key.
+Needs Connect IQ SDK 6.4.2+ (developed against 9.2.0) and a developer key. A
+prebuilt version is also on the
+[Connect IQ Store](https://apps.garmin.com/en-US/apps/ba40a721-acb3-4298-95f3-efdc69d93969);
+build your own to change the app or to point `SERVER_URL` at your own backend.
 
 In VS Code with the Monkey C extension, use the checked-in **Run App** and **Run
 Tests** configurations in the Run and Debug panel. Individual `(:test)` functions

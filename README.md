@@ -4,14 +4,25 @@ A Garmin Connect IQ watch app that detects sustained, high-amplitude wrist shaki
 using the accelerometer. Alerts with vibration, sound and backlight, with optional
 phone push notifications.
 
+**[Install from the Connect IQ Store](https://apps.garmin.com/en-US/apps/ba40a721-acb3-4298-95f3-efdc69d93969)**
+
 **Detection runs entirely on the watch** - no phone, no network, nothing to pair.
 A phone can optionally be notified as well, purely as a louder speaker; if it is
 absent the watch behaves exactly the same.
 
-Live instance: **<https://shakedetector.geminixandroid.com/>** - the landing page
-explains the setup flow to a wearer. The watch reaches it through `SERVER_URL` in
-[ShakeDetectorPhone.mc](source/ShakeDetectorPhone.mc); point that at your own host
-to run your own.
+Two equally supported ways to run it, differing only in whose server the optional
+phone alerts go through:
+
+- **The store build** (link above). Phone alerts go through the live instance at
+  <https://shakedetector.geminixandroid.com/>, whose landing page explains the setup
+  flow to a wearer. Nothing to configure.
+- **Build it yourself.** This repository holds both halves - the watch app in
+  [source/](source/) and the server in [backend/](backend/). Point `SERVER_URL` in
+  [ShakeDetectorPhone.mc](source/ShakeDetectorPhone.mc) at your own host, build, and
+  no data leaves your infrastructure. `SERVER_URL` is a build-time constant, which is
+  why this needs a build of your own rather than a setting.
+
+Either way the detection itself is local to the watch and identical.
 
 > **This is a personal, experimental project. It is NOT a medical device and has
 > not been clinically validated.** The algorithm is a crude amplitude-threshold
