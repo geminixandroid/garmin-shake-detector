@@ -39,12 +39,14 @@ Notes on [ShakeDetectorPhone.mc](../source/ShakeDetectorPhone.mc):
   per-request timeout, so a stuck request is abandoned from the 1 Hz tick -
   otherwise the in-flight flag latches and no further alert is ever sent.
 - **The phone is told at most once a minute** (`ALERT_MIN_INTERVAL_SECS`), decoupled
-  from the detector's 5 s repeat. The wrist should keep buzzing every 5 s - that is the
-  local alarm, and the wearer may be asleep - but a one-minute event used to produce a
-  dozen push notifications, which is how a phone alarm teaches its owner to swipe it
-  away. The first alert after a quiet period always goes through; only repeats inside
-  the window are dropped, and **Menu → Test** resets the throttle so an explicit test
-  is never swallowed.
+  from the detector's 5 s repeat. Both alerts address someone other than the wearer,
+  who during an event is in no state to be helped by their own watch. The wrist keeps
+  buzzing every 5 s because that is the alarm for anyone within earshot and they may
+  not be in the room at the first buzz - but the phone only needs telling once. A
+  one-minute event used to produce a dozen push notifications, which is how a phone
+  alarm teaches its owner to swipe it away. The first alert after a quiet period
+  always goes through; only repeats inside the window are dropped, and
+  **Menu → Test** resets the throttle so an explicit test is never swallowed.
 - **The setup and test screens repaint off a state counter, not an "is busy" flag.**
   Some failures return immediately with no network involved at all, so a request can
   start and fail between two ticks; a flag would never be observed as set and the

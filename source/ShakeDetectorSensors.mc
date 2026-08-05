@@ -96,7 +96,8 @@ class ShakeDetectorSensors {
     }
   }
 
-  // Alert the wearer. Each channel is checked twice: once for whether the
+  // Raise the alarm. The audience is whoever is nearby, not the wearer - during an
+  // event they cannot act on it. Each channel is checked twice: once for whether the
   // device supports it at all, once for whether the user left it enabled.
   // Settings are read from Storage here rather than cached at start-up, so
   // toggling one applies to the very next alarm without a restart.

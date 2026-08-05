@@ -4,6 +4,10 @@ A Garmin Connect IQ watch app that detects sustained, high-amplitude wrist shaki
 using the accelerometer. Alerts with vibration, sound and backlight, with optional
 phone push notifications.
 
+**The alarm is for whoever is nearby, not for the wearer.** Someone in the middle of
+an event cannot act on their own watch buzzing. Sound and vibration are aimed at
+anyone within earshot; the optional push reaches someone in another room.
+
 **[Install from the Connect IQ Store](https://apps.garmin.com/en-US/apps/ba40a721-acb3-4298-95f3-efdc69d93969)**
 
 **Detection runs entirely on the watch** - no phone, no network, nothing to pair.

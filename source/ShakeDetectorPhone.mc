@@ -37,9 +37,11 @@ class ShakeDetectorPhone {
 
   // Minimum gap between two alerts sent to the phone.
   //
-  // Deliberately decoupled from the detector's REPEAT_INTERVAL_SECONDS, which is 5:
-  // the wrist should keep buzzing that often, because that is the local alarm and the
-  // wearer may be asleep - but the phone only needs telling once. Without this a
+  // Deliberately decoupled from the detector's REPEAT_INTERVAL_SECONDS, which is 5.
+  // Both alerts address someone other than the wearer, who during an event is in no
+  // state to be helped by their own watch. The wrist keeps buzzing every 5 s because
+  // that is the alarm for anyone within earshot, and they may not be in the room at
+  // the first buzz - but the phone only needs telling once. Without this gap a
   // one-minute event produced about a dozen push notifications, which is how a phone
   // alarm trains its owner to swipe it away.
   //
