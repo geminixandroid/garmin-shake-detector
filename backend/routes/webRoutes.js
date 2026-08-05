@@ -319,7 +319,29 @@ router.get('/sw.js', (req, res) => {
 
         self.addEventListener('notificationclick', (event) => {
             event.notification.close();
-            event.waitUntil(clients.openWindow('/'));
+
+            // deviceId rides along in the push payload, so the click can land on the
+            // setup page of the watch that actually fired - opening "/" left the user
+            // on the landing page with nothing to act on.
+            var data = event.notification.data || {};
+            var url = data.deviceId
+                ? '/setup?device=' + encodeURIComponent(data.deviceId)
+                : '/';
+
+            event.waitUntil(
+                clients.matchAll({ type: 'window', includeUncontrolled: true })
+                    .then(function (list) {
+                        // Reuse a window already showing this device, otherwise every
+                        // alert piles up another tab (or another PWA screen on iOS).
+                        for (var i = 0; i < list.length; i++) {
+                            var client = list[i];
+                            if (client.url.indexOf(url) !== -1 && 'focus' in client) {
+                                return client.focus();
+                            }
+                        }
+                        return clients.openWindow(url);
+                    })
+            );
         });
     `);
 });
