@@ -89,6 +89,9 @@ storage, which is what makes it unit-testable.
 | `EXCURSION_THRESHOLD_MG` | 625 | deviation from that baseline which counts as an excursion |
 | `WINDOW_SECONDS` | 5 | length of the sliding window |
 | `CROSSING_ALARM_COUNT` | 8 | crossings within the window that mean "alarm" |
+| `SLOTS_PER_SECOND` | 2 | sub-slices each second is cut into for the duration test |
+| `MIN_CROSSINGS_PER_SLOT` | 1 | crossings a single slot needs to count as "active" |
+| `SUSTAINED_SLOTS` | 6 | consecutive active slots the alarm needs (3.0 s) |
 | `WARMUP_SECONDS` | 3 | seconds ignored after the sensor is enabled |
 | `REPEAT_INTERVAL_SECONDS` | 5 | how often the alert repeats while shaking continues |
 
@@ -101,19 +104,44 @@ Once a second the app receives 25 samples per axis and, for each sample:
    across seconds, so an excursion straddling a second boundary is not counted
    twice.
 
-The per-second count goes into a 5-slot ring buffer. When the sum over the window
-reaches 8, the alarm fires **once** (on the rising edge); while the shaking
-continues it repeats every 5 s rather than either chattering every second or going
-silent until everything settles. When the window falls back below the threshold the
-alarm resets and can fire again. Because the window is a *sum*, a brief pause does
-not interrupt it - and equally, the total stays elevated for a few seconds after
-the movement stops.
+The samples arrive once a second, but the detector cuts each callback into
+`SLOTS_PER_SECOND` half-second slots and counts crossings per slot. Those go into a
+10-slot ring buffer covering the 5 s window, and the alarm needs **two** conditions
+at once:
+
+- **Intensity** - the sum over the whole 5 s window reaches `CROSSING_ALARM_COUNT`.
+- **Duration** - `SUSTAINED_SLOTS` slots *in a row* have each carried at least
+  `MIN_CROSSINGS_PER_SLOT` crossings.
+
+Intensity alone is not enough: at 25 Hz a single violent swing or a knock against a
+table puts 8 rising edges into one second and hits the threshold instantly. And the
+duration test has to be a **separate run counter**, not a count of non-empty slots
+in the window, because the window is a sum and forgives gaps by design - two brief
+bursts three seconds apart add up in it exactly like continuous movement. The run
+counter is reset outright by the first slot that goes quiet.
+
+Slot size is what a duration test costs. Slots are aligned to the sensor callback,
+not to your wrist, so a run of N slots only guarantees a bit more than N-1 slots of
+real movement. At one slot per second that slop is a whole second: insisting on
+"more than 3 s" meant waiting 4 to 5 s before the watch buzzed. Half-second slots
+halve the slop, so 6 slots fire **3.0-3.5 s** after the shaking starts and never on
+less than 2.5 s of it. Going finer than half a second is not worth it - a slot
+would hold too few samples to tell a rhythm from a single excursion.
+
+When both conditions hold the alarm fires **once** (on the rising edge); while the
+shaking continues it repeats every 5 s rather than either chattering every second
+or going silent until everything settles. The decision itself is made once per
+callback, not per slot, since that is as often as the sensor wakes the app. When
+either condition lapses the alarm resets and can fire again.
 
 Tuning notes: raise `CROSSING_ALARM_COUNT` or `EXCURSION_THRESHOLD_MG` if you get
-false alarms, lower them if real events are missed. The two interact - the threshold
-decides what counts as an excursion at all, the count decides how many are needed -
-and both are worth setting from recordings of your own nights rather than by
-guesswork.
+false alarms, lower them if real events are missed. `SUSTAINED_SLOTS` is the "how
+long must it last" knob - it is the one to change, in steps of `SLOTS_PER_SECOND`
+per second of shaking, and 1 gives the old intensity-only behaviour.
+`MIN_CROSSINGS_PER_SLOT` decides how easily a run survives a weak slot: raise it to
+demand vigorous shaking throughout, at the cost of runs breaking on the turnaround
+between strokes. All are worth setting from recordings of your own nights rather
+than by guesswork.
 
 A minimum-duration requirement was tried here and removed: it is the most effective
 thing available against false alarms without frequency analysis, since turning over

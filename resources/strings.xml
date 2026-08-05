@@ -1,6 +1,6 @@
 <resources>
   <string id="AppName">ShakeDetector</string>
-  <string id="VersionId">V0.1.0</string>
+  <string id="VersionId">V0.1.1</string>
 
   <!-- Status line. Only one of these is shown at a time - see
        ShakeDetectorView.statusString(). -->
