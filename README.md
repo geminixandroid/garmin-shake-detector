@@ -36,9 +36,15 @@ is the entire difference - three fractions in
 
 The bars are not raw acceleration - they are the **window total**, i.e. the exact
 number the alarm compares against `CROSSING_ALARM_COUNT`, and the dashed line is
-that threshold. So the chart shows the decision variable approaching the decision
+that threshold. So the chart shows a decision variable approaching its decision
 line, which is what makes the tuning notes further down actionable: if the bars
 regularly brush the line while you are just walking, raise the threshold.
+
+It shows the *intensity* half of the decision only. Bars over the line with no
+alarm is the normal, correct look of a movement that was loud but too short - the
+duration half is the run counter, which is not plotted. It goes to the log
+(`total=24 run=4/6`) rather than onto a 40-bar chart that has no room for a second
+series.
 
 The y axis is fixed at twice the threshold and never auto-scales - an auto-scaled
 chart would make a still wrist look identical to a violent one. Values above the
@@ -101,8 +107,8 @@ Once a second the app receives 25 samples per axis and, for each sample:
 2. checks whether `|magnitude - 1000| > 625`;
 3. counts a **rising edge** only - each excursion over the threshold, not every
    sample that is still above it. The "was above" flag deliberately survives
-   across seconds, so an excursion straddling a second boundary is not counted
-   twice.
+   across slot and callback boundaries alike, so an excursion straddling one is
+   not counted twice.
 
 The samples arrive once a second, but the detector cuts each callback into
 `SLOTS_PER_SECOND` half-second slots and counts crossings per slot. Those go into a
@@ -143,11 +149,13 @@ demand vigorous shaking throughout, at the cost of runs breaking on the turnarou
 between strokes. All are worth setting from recordings of your own nights rather
 than by guesswork.
 
-A minimum-duration requirement was tried here and removed: it is the most effective
-thing available against false alarms without frequency analysis, since turning over
-in bed takes 1-3 s while a clonic phase lasts 30 or more, but it makes the app
-tiresome to test by hand and the simple version detects real shaking perfectly well.
-If false alarms ever become the problem, that is the first thing to bring back.
+The minimum-duration requirement is the most effective thing available against
+false alarms without frequency analysis: turning over in bed takes 1-3 s, while a
+clonic phase lasts 30 or more. It was tried, removed as tiresome to test by hand,
+and brought back once it became clear what the count-only version actually accepts
+- a single hard knock against a bed frame reaches 8 crossings inside one second.
+The cost is real, though: 3 s of deliberate shaking to test the thing by hand feels
+much longer than it sounds, and **Menu → Test** exists partly for that reason.
 
 ### Known limits of this approach
 
@@ -286,7 +294,7 @@ black app list - the icon was there, just unseeable.
 | File | Responsibility |
 |---|---|
 | [ShakeDetector.mc](source/ShakeDetector.mc) | the algorithm, dependency-free and unit-tested |
-| [ShakeDetectorTest.mc](source/ShakeDetectorTest.mc) | 8 `(:test)` cases; compiled in only with `--unit-test` |
+| [ShakeDetectorTest.mc](source/ShakeDetectorTest.mc) | 12 `(:test)` cases; compiled in only with `--unit-test` |
 | [ShakeDetectorSensors.mc](source/ShakeDetectorSensors.mc) | accelerometer subscription, alerting |
 | [ShakeDetectorState.mc](source/ShakeDetectorState.mc) | screen mode, mute flag and its expiry timer |
 | [ShakeDetectorPhone.mc](source/ShakeDetectorPhone.mc) | device id, and the two requests to the backend |
