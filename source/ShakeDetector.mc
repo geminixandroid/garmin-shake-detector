@@ -5,10 +5,15 @@ import Toybox.Math;
 // dependency on sensors, UI or storage so it can be unit tested (see
 // ShakeDetectorTest.mc).
 //
-// The algorithm counts amplitude threshold *crossings* in a sliding window
-// rather than doing any spectral (FFT) analysis: on Monkey C that is far
-// cheaper in CPU and memory, and it is a decent match for what we are looking
-// for - obviously rhythmic, high-amplitude shaking of the wrist.
+// The algorithm counts amplitude threshold *crossings* in a sliding window, with
+// no frequency analysis at all. That is not a CPU decision - a band-pass IIR
+// would cost four multiply-adds per sample. It is the sample rate: at 25 Hz
+// Nyquist is 12.5 Hz, which leaves no room above a 3-8 Hz band for a filter to
+// roll off in, and impulse energy above it aliases straight into that band. See
+// "Why there is no frequency filter" in docs/algorithm.md.
+//
+// The consequence to keep in mind while reading the rest: this code knows how
+// often the amplitude got large, and never how rhythmically.
 //
 // The alarm needs two things at once - enough crossings in the window
 // (CROSSING_ALARM_COUNT) AND an unbroken run of active slots
