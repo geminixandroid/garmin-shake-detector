@@ -169,8 +169,7 @@ much longer than it sounds, and **Menu → Test** exists partly for that reason.
   approximate it. Not implemented.
 - **Amplitude gets damped** by an arm pinned under bedding, which is the known
   weak spot of wrist accelerometry overnight and the reason clinical devices add a
-  second modality. Heart rate was tried as that second modality and removed again -
-  it needs sleeping-baseline tracking to be worth anything, and that needs data.
+  second modality.
 - Focal, absence and atonic seizures are out of scope entirely.
 
 ## Phone alert
