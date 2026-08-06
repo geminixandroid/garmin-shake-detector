@@ -1,6 +1,13 @@
 node_modules
 .htaccess
 
+# Not tracked on purpose. It kept being regenerated on whichever machine ran the
+# install last, and a lockfile from a modern Node resolves a tree the deployment
+# host (Node 14) cannot load. The versions that actually matter are pinned exactly
+# in package.json - see the comment there. Install with `npm install`, not
+# `npm ci`, which requires a lockfile.
+package-lock.json
+
 # Secrets - the VAPID private key lives in both of these. Committing them means
 # rotating the keypair, which invalidates every existing push subscription.
 .env

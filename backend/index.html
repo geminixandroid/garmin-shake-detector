@@ -56,7 +56,7 @@
 <body>
 
 <h1>🚨 ShakeDetector</h1>
-<p class="sub">A Garmin watch watches for sudden rhythmic shaking of the wrist and tells your phone.</p>
+<p class="sub">A Garmin watch watches for prolonged, hard shaking of the wrist and tells your phone.</p>
 
 <div class="warn">
   <strong>This is a personal, experimental project, not a medical device.</strong>
@@ -67,16 +67,27 @@
 <h2>How it works</h2>
 <p>
   The watch reads its accelerometer 25 times a second and counts how often the movement
-  crosses an amplitude threshold. When enough crossings pile up inside a five-second
-  window, it treats that as shaking: it vibrates, beeps and lights the screen, and posts a
-  short signal to this server. The server then pushes a notification to every browser
-  subscribed to that watch.
+  crosses an amplitude threshold. Two things then have to be true at once: enough of those
+  crossings inside a five-second window, <em>and</em> at least three seconds of them
+  running without a break. The second condition is what separates shaking from a single
+  hard knock, which reaches the count on its own inside one second.
+</p>
+<p>
+  When both hold — roughly three to three and a half seconds after the shaking starts —
+  the watch vibrates, beeps and lights the screen, and posts a short signal to this
+  server. The server then pushes a notification to every browser subscribed to that watch.
 </p>
 <p>
   Detection happens entirely on the watch, so it keeps working with the phone off, out of
   range or out of signal — the phone is only a louder speaker. To keep notifications
   useful rather than noisy, the watch tells the server at most once a minute even while it
-  keeps buzzing on your wrist every few seconds.
+  keeps buzzing on the wrist every few seconds.
+</p>
+<p>
+  <strong>The alarm is aimed at whoever is nearby, not at the person wearing the watch.</strong>
+  Someone in the middle of an event cannot act on their own watch buzzing. The sound and
+  vibration are there for anyone within earshot; the notification reaches someone in
+  another room.
 </p>
 
 <h2>Connecting a watch</h2>
