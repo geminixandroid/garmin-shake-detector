@@ -8,7 +8,7 @@ phone push notifications.
 an event cannot act on their own watch buzzing. Sound and vibration are aimed at
 anyone within earshot; the optional push reaches someone in another room.
 
-**[Install from the Connect IQ Store](https://apps.garmin.com/en-US/apps/ba40a721-acb3-4298-95f3-efdc69d93969)**
+**[Install from the Connect IQ Store](https://apps.garmin.com/apps/ba40a721-acb3-4298-95f3-efdc69d93969)**
 
 **Detection runs entirely on the watch** - no phone, no network, nothing to pair.
 A phone can optionally be notified as well, purely as a louder speaker; if it is

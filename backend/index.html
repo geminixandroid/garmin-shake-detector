@@ -51,18 +51,31 @@
   }
   footer { margin-top: 2.5rem; font-size: .85rem; opacity: .65; }
   a { color: inherit; }
+  .install {
+    display: inline-block;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: .55rem 1rem;
+    margin: 0 0 1.75rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
 </style>
 </head>
 <body>
 
 <h1>🚨 ShakeDetector</h1>
-<p class="sub">A Garmin watch watches for prolonged, hard shaking of the wrist and tells your phone.</p>
+<p class="sub">A Garmin watch detects sustained, high-amplitude wrist shaking and tells your phone.</p>
 
 <div class="warn">
   <strong>This is a personal, experimental project, not a medical device.</strong>
   The algorithm has not been clinically validated. Do not rely on it to detect a seizure,
   and do not treat it as a substitute for medical supervision.
 </div>
+
+<p>
+  <a class="install" href="https://apps.garmin.com/apps/ba40a721-acb3-4298-95f3-efdc69d93969">⌚ Install on your Garmin watch</a>
+</p>
 
 <h2>How it works</h2>
 <p>
@@ -92,6 +105,10 @@
 
 <h2>Connecting a watch</h2>
 <ol>
+  <li>
+    Install <a href="https://apps.garmin.com/apps/ba40a721-acb3-4298-95f3-efdc69d93969">ShakeDetector
+    from the Connect IQ Store</a> and open it on the watch.
+  </li>
   <li>On the watch: <strong>Menu → Setup link</strong>. A six-character code appears.</li>
   <li>On your phone, open <code>this-site/s/CODE</code> to reach the setup page.</li>
   <li>Press <strong>Subscribe to notifications</strong> and allow them in the browser.</li>
