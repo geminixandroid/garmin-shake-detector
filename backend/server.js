@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const routes = require('./routes');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+const { log } = require('./utils/log');
 
 const app = express();
 
@@ -33,22 +34,22 @@ if (process.env.LISTEN) {
     const lastColon = process.env.LISTEN.lastIndexOf(':');
     if (lastColon === -1) {
         app.listen(process.env.LISTEN, () => {
-            console.log(`🚀 ShakeDetector listening on socket ${process.env.LISTEN}`);
+            log('server', `listening on socket ${process.env.LISTEN}`);
         });
     } else {
         const host = process.env.LISTEN.slice(0, lastColon);
         const port = parseInt(process.env.LISTEN.slice(lastColon + 1), 10);
         app.listen(port, host, () => {
-            console.log(`🚀 ShakeDetector listening on ${process.env.LISTEN}`);
+            log('server', `listening on ${process.env.LISTEN}`);
         });
     }
 } else if (require.main === module) {
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
-        console.log(`🚀 ShakeDetector listening on port ${port}`);
+        log('server', `listening on port ${port}`);
     });
 } else {
-    console.log('ℹ️ server.js required as a module - not starting a listener');
+    log('server', 'required as a module - not starting a listener');
 }
 
 module.exports = app;

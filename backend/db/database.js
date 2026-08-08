@@ -55,6 +55,6 @@ db.serialize(() => {
     `);
 });
 
-console.log('✅ Database ready');
+require('../utils/log').log('db', `ready at ${DB_PATH}`);
 
 module.exports = db;

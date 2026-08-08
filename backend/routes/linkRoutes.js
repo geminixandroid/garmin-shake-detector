@@ -3,6 +3,7 @@ const router = express.Router();
 const linkService = require('../services/linkService');
 const { writeLimiter } = require('../middleware/rateLimiter');
 const { validateDeviceId } = require('../utils/validators');
+const { log } = require('../utils/log');
 
 router.post('/shorten', writeLimiter, async (req, res) => {
     try {
@@ -16,7 +17,7 @@ router.post('/shorten', writeLimiter, async (req, res) => {
         const baseUrl = `${req.protocol}://${req.get('host')}`;
         const shortUrl = `${baseUrl}/s/${shortCode}`;
 
-        console.log(`🔗 Short link: ${deviceId} -> ${shortUrl}`);
+        log('link', `${deviceId} code=${shortCode}`);
         res.json({ shortUrl, shortCode });
     } catch (err) {
         res.status(500).json({ error: err.message });

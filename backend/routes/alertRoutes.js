@@ -5,6 +5,7 @@ const deviceService = require('../services/deviceService');
 const pushService = require('../services/pushService');
 const { writeLimiter } = require('../middleware/rateLimiter');
 const { validateDeviceId } = require('../utils/validators');
+const { log, logError } = require('../utils/log');
 
 router.post('/alert', writeLimiter, async (req, res) => {
     try {
@@ -21,19 +22,25 @@ router.post('/alert', writeLimiter, async (req, res) => {
         await alertService.saveAlert(deviceId, alertTimestamp);
         await deviceService.updateLastAlert(deviceId);
 
+        // Logged on arrival, separately from the push result below. The two are
+        // different facts - "the watch reached the server" and "the phones were
+        // told" - and when the second one fails the first is what proves the watch
+        // side is working.
+        log('alert', `${deviceId} received`);
+
         // Pushing does not block the response: the watch must not wait on the phone.
         pushService.sendAlertPush(deviceId, alertTimestamp)
             .then(result => {
                 if (result.success) {
-                    console.log(`📨 Push sent: ${result.sent}, failed: ${result.failed}`);
+                    log('alert', `${deviceId} push sent ${result.sent}/${result.sent + result.failed}`);
                 } else {
-                    console.log(`⚠️ Push not sent: ${result.reason}`);
+                    log('alert', `${deviceId} push NOT sent: ${result.reason}`);
                 }
                 if (result.removed) {
-                    console.log(`🧹 Dead subscriptions removed: ${result.removed}`);
+                    log('alert', `${deviceId} dead subscriptions removed: ${result.removed}`);
                 }
             })
-            .catch(err => console.error('❌ Push error:', err.message));
+            .catch(err => logError('alert', `${deviceId} push error: ${err.message}`));
 
         res.json({ success: true, message: 'Alert received' });
     } catch (err) {

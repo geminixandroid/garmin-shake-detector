@@ -304,12 +304,49 @@ router.get('/sw.js', (req, res) => {
     res.send(`
         self.addEventListener('push', (event) => {
             const data = event.data ? event.data.json() : {};
+            const payload = data.data || {};
+
+            // The time is formatted here, on the phone, rather than on the server.
+            // It arrives as epoch milliseconds - an absolute moment with no timezone
+            // - so toLocaleTimeString() renders it in the READER's timezone, which is
+            // the frame of reference that answers "is this happening now, or did I
+            // miss it" at a glance.
+            //
+            // It matters because delivery can lag the event badly: iOS defers push
+            // for web apps that have not been opened recently, so a notification can
+            // land long after the alarm with nothing on it to say so.
+            // Prefixed rather than appended: the server's body ends in a full stop,
+            // and the time is the first thing worth reading anyway.
+            var when = '';
+            if (payload.timestamp) {
+                try {
+                    // getTime() has to be checked explicitly: an unparseable value
+                    // does not throw here, it yields an Invalid Date whose
+                    // toLocaleTimeString() is the literal string "Invalid Date".
+                    var at = new Date(payload.timestamp);
+                    if (!isNaN(at.getTime())) {
+                        when = at.toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) + ' · ';
+                    }
+                } catch (e) {
+                    // Deliberately swallowed. A push whose handler throws shows no
+                    // notification at all, and iOS penalises a userVisibleOnly
+                    // subscription that keeps producing none - so a payload without a
+                    // usable timestamp must still put something on screen.
+                }
+            }
+
             const options = {
-                body: data.body || 'Alert from your watch',
+                body: when + (data.body || 'Alert from your watch'),
                 icon: '/icon-192.png',
                 badge: '/icon-192.png',
                 vibrate: [200, 100, 200],
-                data: data.data || {},
+                data: payload,
+                // Sorts and labels the notification by when the alarm happened rather
+                // than by when it was delivered - the same lag as above.
+                timestamp: payload.timestamp,
                 requireInteraction: true
             };
             event.waitUntil(
