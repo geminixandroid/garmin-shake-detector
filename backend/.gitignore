@@ -17,5 +17,8 @@ package-lock.json
 *.db
 *.db-journal
 
-# Log files
+# Log files. The app's own log carries a device_id on every line, and a device_id is
+# effectively a bearer token - it must never reach the repository.
 npm-debug.log*
+*.log
+*.log.[0-9]
